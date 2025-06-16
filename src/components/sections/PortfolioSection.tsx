@@ -1,272 +1,404 @@
 "use client";
 
-import Link from "next/link";
-import { motion, Variants, useInView, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { 
-  ExternalLink, 
-  ArrowRight, 
-  Eye,
-  ChevronLeft,
-  ChevronRight,
-  Smartphone
-} from "lucide-react";
 import React, { useRef, useState } from "react";
-
-// Custom styles for mobile scroll
-const customStyles = `
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  .phone-iframe {
-    border-radius: 2.5rem;
-    overflow: hidden;
-  }
-  .phone-iframe::-webkit-scrollbar {
-    display: none;
-  }
-  .phone-iframe iframe {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .phone-iframe iframe::-webkit-scrollbar {
-    display: none;
-  }
-`;
+import Image from "next/image";
+import { motion, useInView, Variants, AnimatePresence } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { 
+  ExternalLink,
+  Monitor,
+  ArrowUpRight,
+  Users,
+  Zap,
+  Target,
+  Building2,
+  Brain,
+  TrendingUp,
+  X,
+  Maximize2
+} from "lucide-react";
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
   },
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
-// Portfolio projects data
-const portfolioProjects = [
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 40, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+const modalVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+const modalContentVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.8, y: 20 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.8,
+    y: 20,
+    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+const projects = [
   {
     id: 1,
-    title: "GP Realty Finance",
-    description: "Commercial real estate financing platform with comprehensive loan solutions and client portal.",
-    category: "Next.js Development",
-    websiteUrl: "https://gprealty.vercel.app/",
-    color: "#2563eb",
-    accent: "#1d4ed8"
+    name: "G.P Realty",
+    category: "Real Estate Platform",
+    shortDescription: "Modern student housing platform",
+    detailedDescription: "A comprehensive real estate platform designed specifically for university students seeking rental properties near their campuses. Features advanced search filters, virtual property tours, secure booking system, and seamless communication between students and property owners.",
+    url: "https://gprealty.vercel.app/",
+    image: "/gprealty.png",
+    technologies: ["Next.js", "React", "Tailwind CSS", "Vercel"],
+    features: ["Property Search", "Virtual Tours", "Secure Booking", "Student Verification"],
+    icon: Building2,
+    color: "from-blue-500 to-cyan-500",
+    accentColor: "blue",
+    stats: {
+      label: "Active Listings",
+      value: "500+"
+    }
   },
   {
     id: 2,
-    title: "Shilla Lace",
-    description: "Premium Shopify e-commerce store selling luxury lingerie worldwide with elegant design and seamless shopping experience.",
-    category: "Shopify Store",
-    websiteUrl: "https://shillalace.com/",
-    color: "#ec4899",
-    accent: "#db2777"
+    name: "Adverlead",
+    category: "Marketing Automation",
+    shortDescription: "AI-powered lead generation platform",
+    detailedDescription: "An all-in-one marketing and lead generation platform featuring Lee, an AI assistant specifically crafted for renovation professionals. Automates Facebook ads, qualifies leads, books appointments, and manages entire marketing campaigns with intelligent automation.",
+    url: "https://lee-ruby.vercel.app/",
+    image: "/adverlead.png",
+    technologies: ["React", "AI Integration", "Facebook API", "Automation"],
+    features: ["AI Assistant", "Ad Automation", "Lead Qualification", "Campaign Management"],
+    icon: Brain,
+    color: "from-purple-500 to-pink-500",
+    accentColor: "purple",
+    stats: {
+      label: "Leads Generated",
+      value: "10k+"
+    }
   },
   {
     id: 3,
-    title: "Cyprus Tourism Portal",
-    description: "Multilingual tourism website with booking system and destination galleries.",
-    category: "Wix Website", 
-    websiteUrl: "https://cyprus-tourism-demo.com/",
-    color: "#0ea5e9",
-    accent: "#0284c7"
-  },
-  {
-    id: 4,
-    title: "Marketing Automation Hub",
-    description: "Workflow automation platform connecting CRM, email marketing, and project management.",
-    category: "Workflow Automation",
-    websiteUrl: "https://autoflow-demo.com/",
-    color: "#22c55e",
-    accent: "#16a34a"
+    name: "Lead Gen Magic",
+    category: "Marketing Agency",
+    shortDescription: "Professional lead generation services",
+    detailedDescription: "A full-service lead generation agency website showcasing magical marketing solutions for businesses. Features comprehensive service offerings, transparent pricing, client testimonials, and conversion-optimized landing pages designed to turn prospects into loyal customers.",
+    url: "https://gitmcp.vercel.app/",
+    image: "/leadgenmagic.png",
+    technologies: ["Next.js", "Framer Motion", "CRO", "Analytics"],
+    features: ["Service Showcase", "Pricing Plans", "Lead Capture", "Analytics Dashboard"],
+    icon: Target,
+    color: "from-orange-500 to-red-500",
+    accentColor: "orange",
+    stats: {
+      label: "Conversion Rate",
+      value: "15%+"
+    }
   }
 ];
 
-// Enhanced Phone Mockup Component
-const PhoneMockup = ({ project }: { project: typeof portfolioProjects[0] }) => {
+const ProjectModal = ({ project, isOpen, onClose }: { 
+  project: typeof projects[0] | null, 
+  isOpen: boolean, 
+  onClose: () => void 
+}) => {
+  if (!project) return null;
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="relative mx-auto" style={{ width: '360px', height: '720px' }}>
-      {/* Outer Shadow */}
-      <div className="absolute inset-0 rounded-[3rem] bg-black/30 blur-2xl transform translate-y-8 scale-105 opacity-60"></div>
-      
-      {/* Phone Frame */}
-      <div className="relative w-full h-full bg-gradient-to-b from-gray-800 via-gray-850 to-gray-900 rounded-[3rem] p-2 shadow-2xl shadow-black/80 border border-gray-700/50">
-        {/* Inner Frame */}
-        <div className="relative w-full h-full bg-gradient-to-b from-gray-900 to-black rounded-[2.8rem] p-1 shadow-inner">
-          {/* Screen Container - Clean and Minimal */}
-          <div className="relative w-full h-full bg-white rounded-[2.5rem] overflow-hidden shadow-inner border border-gray-800/50">
-            {/* Website Content - Full Screen */}
-            <div className="w-full h-full relative">
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          variants={modalVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          onClick={handleBackdropClick}
+        >
+          <motion.div
+            variants={modalContentVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="relative w-full max-w-6xl h-full max-h-[90vh] bg-neutral-900 rounded-2xl border border-neutral-700 overflow-hidden shadow-2xl"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 md:p-6 bg-neutral-800/50 border-b border-neutral-700">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg bg-gradient-to-r ${project.color} bg-opacity-10`}>
+                  <project.icon className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">{project.name}</h3>
+                  <p className="text-sm text-slate-400">{project.category}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-neutral-600 text-neutral-300 hover:border-orange-500 hover:text-orange-400 hover:bg-orange-500/10"
+                  onClick={() => window.open(project.url, '_blank')}
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:inline">Open in New Tab</span>
+                  <span className="sm:hidden">Open</span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-10 w-10 p-0 hover:bg-red-500/20 hover:text-red-400"
+                  onClick={onClose}
+                >
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Website iframe */}
+            <div className="relative flex-1 h-full bg-white">
               <iframe
-                src={project.websiteUrl}
-                className="w-full h-full border-0 phone-iframe"
-                style={{
-                  borderRadius: '2.5rem'
-                }}
-                title={`${project.title} Preview`}
-                loading="lazy"
-                sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-                referrerPolicy="no-referrer"
-                onError={(e) => {
-                  // Hide iframe and show screenshot fallback
-                  const iframe = e.currentTarget;
-                  const container = iframe.parentElement;
-                  iframe.style.display = 'none';
-                  
-                  // Create screenshot image as fallback
-                  const img = document.createElement('img');
-                  img.src = `https://api.screenshotone.com/take?access_key=_demo_&url=${encodeURIComponent(project.websiteUrl)}&viewport_width=375&viewport_height=812&device_scale_factor=2&format=webp&response_type=image`;
-                  img.className = 'w-full h-full object-cover';
-                  img.style.borderRadius = '2.5rem';
-                  img.alt = `${project.title} Screenshot`;
-                  
-                  // Add click handler to open actual site
-                  img.style.cursor = 'pointer';
-                  img.onclick = () => window.open(project.websiteUrl, '_blank');
-                  
-                  if (container) {
-                    container.appendChild(img);
-                  }
-                }}
+                src={project.url}
+                className="w-full h-full border-0"
+                title={`${project.name} Live Preview`}
+                style={{ height: 'calc(90vh - 80px)' }}
               />
             </div>
-          </div>
-        </div>
-        
-        {/* Side Buttons */}
-        {/* Power Button */}
-        <div className="absolute right-[-2px] top-28 w-1 h-14 bg-gradient-to-b from-gray-600 to-gray-800 rounded-l shadow-inner border-t border-b border-gray-500/30"></div>
-        
-        {/* Volume Up */}
-        <div className="absolute left-[-2px] top-24 w-1 h-10 bg-gradient-to-b from-gray-600 to-gray-800 rounded-r shadow-inner border-t border-b border-gray-500/30"></div>
-        
-        {/* Volume Down */}
-        <div className="absolute left-[-2px] top-38 w-1 h-10 bg-gradient-to-b from-gray-600 to-gray-800 rounded-r shadow-inner border-t border-b border-gray-500/30"></div>
-        
-        {/* Silent Switch */}
-        <div className="absolute left-[-1px] top-20 w-0.5 h-4 bg-gray-700 rounded-r"></div>
-      </div>
-      
-      {/* Floating Glow Effect */}
-      <div 
-        className="absolute inset-0 rounded-[3rem] blur-xl opacity-20 -z-10 animate-pulse"
-        style={{ 
-          background: `radial-gradient(circle at center, ${project.color}40, transparent 70%)`,
-          transform: 'scale(1.1)',
-          animationDuration: '3s'
-        }}
-      ></div>
-      
-      {/* Additional Accent Glow */}
-      <div 
-        className="absolute inset-0 rounded-[3rem] blur-2xl opacity-10 -z-20"
-        style={{ 
-          background: `linear-gradient(135deg, ${project.color}30, ${project.accent}20, transparent)`,
-          transform: 'scale(1.2)'
-        }}
-      ></div>
-    </div>
+
+            {/* Mobile Close Button */}
+            <div className="md:hidden absolute bottom-4 left-1/2 transform -translate-x-1/2">
+              <Button
+                size="lg"
+                className="bg-black/80 text-white border border-white/20 backdrop-blur-md hover:bg-black/60 shadow-xl"
+                onClick={onClose}
+              >
+                <X className="w-5 h-5 mr-2" />
+                Close Preview
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
-// Project Selection Card
-const ProjectCard = ({ 
-  project, 
-  isActive, 
-  onClick 
-}: { 
-  project: typeof portfolioProjects[0]; 
-  isActive: boolean;
-  onClick: () => void;
+const ProjectCard = ({ project, index, onOpenModal }: { 
+  project: typeof projects[0], 
+  index: number,
+  onOpenModal: (project: typeof projects[0]) => void 
 }) => {
+  const cardRef = useRef(null);
+  const isInView = useInView(cardRef, { once: true, margin: "-50px" });
+
   return (
-    <motion.button
-      onClick={onClick}
-      whileHover={{ scale: 1.02, y: -2 }}
-      whileTap={{ scale: 0.98 }}
-      className={`relative w-full p-6 text-left rounded-2xl border transition-all duration-300 ${
-        isActive 
-          ? 'bg-gradient-to-br from-orange-500/10 to-orange-600/5 border-orange-500/30 shadow-lg shadow-orange-500/10' 
-          : 'bg-neutral-900/50 border-neutral-700/50 hover:border-neutral-600/50 hover:bg-neutral-800/50'
-      }`}
+    <motion.div
+      ref={cardRef}
+      variants={cardVariants}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      className="group"
     >
-      {/* Active Indicator */}
-      {isActive && (
-        <div className="absolute top-4 right-4 w-3 h-3 bg-orange-500 rounded-full shadow-lg shadow-orange-500/50"></div>
-      )}
-      
-      {/* Category Badge */}
-      <Badge 
-        className={`mb-3 text-xs font-medium ${
-          isActive 
-            ? 'bg-orange-500/20 text-orange-300 border-orange-500/30' 
-            : 'bg-neutral-700/50 text-neutral-300 border-neutral-600/50'
-        }`}
-      >
-        {project.category}
-      </Badge>
-      
-      {/* Project Info */}
-      <h3 className="text-lg font-semibold text-slate-100 mb-2 leading-tight">
-        {project.title}
-      </h3>
-      
-      <p className="text-sm text-slate-400 leading-relaxed">
-        {project.description}
-      </p>
-      
-      {/* Color Accent */}
-      <div 
-        className="absolute bottom-0 left-0 w-full h-1 rounded-b-2xl"
-        style={{ backgroundColor: isActive ? '#f97316' : project.color }}
-      ></div>
-    </motion.button>
+      <Card className="bg-gradient-to-br from-neutral-900/80 to-neutral-800/80 border-neutral-700/50 backdrop-blur-sm rounded-2xl overflow-hidden hover:border-neutral-600/50 transition-all duration-500 hover:shadow-2xl hover:shadow-black/20 hover:-translate-y-2">
+        {/* Project Image */}
+        <div className="relative overflow-hidden">
+          <div className="aspect-video relative">
+            <Image
+              src={project.image}
+              alt={`${project.name} Screenshot`}
+              fill
+              className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+            {/* Overlay Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            
+            {/* Hover Actions */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <Button
+                size="lg"
+                className="bg-white/10 border border-white/20 text-white backdrop-blur-md hover:bg-white/20 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300"
+                onClick={() => onOpenModal(project)}
+              >
+                <Maximize2 className="w-5 h-5 mr-2" />
+                Preview Site
+              </Button>
+            </div>
+          </div>
+          
+          {/* Category Badge */}
+          <div className="absolute top-4 left-4">
+            <Badge className={`${
+              project.accentColor === 'blue' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' :
+              project.accentColor === 'purple' ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' :
+              'bg-orange-500/20 text-orange-300 border-orange-500/30'
+            } backdrop-blur-sm font-medium`}>
+              {project.category}
+            </Badge>
+          </div>
+
+          {/* Stats Badge */}
+          <div className="absolute top-4 right-4">
+            <div className="bg-black/40 backdrop-blur-md rounded-lg px-3 py-1.5 border border-white/10">
+              <div className="text-xs text-gray-300">{project.stats.label}</div>
+              <div className="text-sm font-bold text-white">{project.stats.value}</div>
+            </div>
+          </div>
+        </div>
+
+        <CardHeader className="p-6">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className={`p-3 rounded-xl bg-gradient-to-r ${project.color} bg-opacity-10 border border-opacity-20`}>
+                <project.icon className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-slate-100 mb-1">
+                  {project.name}
+                </h3>
+                <p className="text-sm text-slate-400">
+                  {project.shortDescription}
+                </p>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-10 w-10 p-0 hover:bg-orange-500/20 hover:text-orange-400 shrink-0"
+              onClick={() => onOpenModal(project)}
+            >
+              <ArrowUpRight className="w-4 h-4" />
+            </Button>
+          </div>
+
+          <p className="text-slate-300 leading-relaxed mb-6">
+            {project.detailedDescription}
+          </p>
+
+          {/* Key Features */}
+          <div className="mb-6">
+            <h4 className="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+              <Zap className="w-4 h-4 text-orange-400" />
+              Key Features
+            </h4>
+            <div className="grid grid-cols-2 gap-2">
+              {project.features.map((feature, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-xs text-slate-400">
+                  <div className="w-1.5 h-1.5 bg-orange-500 rounded-full" />
+                  {feature}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Technologies */}
+          <div>
+            <h4 className="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+              <Monitor className="w-4 h-4 text-orange-400" />
+              Technologies
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {project.technologies.map((tech, idx) => (
+                <Badge
+                  key={idx}
+                  variant="secondary"
+                  className="text-xs px-3 py-1 bg-neutral-800/80 text-slate-400 border-neutral-600/50 hover:border-neutral-500/50 transition-colors"
+                >
+                  {tech}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
+    </motion.div>
   );
 };
 
 export default function PortfolioSection() {
-  const [currentProject, setCurrentProject] = useState(0);
+  const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
-  const nextProject = () => {
-    setCurrentProject((prev) => (prev + 1) % portfolioProjects.length);
+  const openModal = (project: typeof projects[0]) => {
+    setSelectedProject(project);
+    setIsModalOpen(true);
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
   };
 
-  const prevProject = () => {
-    setCurrentProject((prev) => (prev - 1 + portfolioProjects.length) % portfolioProjects.length);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedProject(null);
+    // Restore body scroll
+    document.body.style.overflow = 'unset';
   };
+
+  // Close modal on escape key
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isModalOpen) {
+        closeModal();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isModalOpen]);
 
   return (
     <section 
       ref={sectionRef}
       className="relative w-full py-20 md:py-32 px-4 md:px-8 bg-[#0A0A0A] text-slate-100 overflow-hidden"
     >
-      {/* Custom Styles */}
-      <style jsx>{customStyles}</style>
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_60%,transparent_100%)] opacity-5" />
       
-      {/* Subtle Background Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:6rem_6rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_60%,transparent_100%)] opacity-10" />
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-orange-500/5 to-transparent opacity-50" />
       
       <div className="container mx-auto max-w-7xl relative z-10">
         {/* Section Header */}
@@ -274,193 +406,84 @@ export default function PortfolioSection() {
           variants={sectionVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="text-center mb-12 md:mb-24"
+          className="text-center mb-16 md:mb-24"
         >
-          <motion.div variants={itemVariants} className="flex items-center justify-center gap-3 mb-4 md:mb-6">
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-orange-500/15 border border-orange-500/30 rounded-xl flex items-center justify-center">
-              <Eye className="w-4 h-4 md:w-5 md:h-5 text-orange-400" />
+          <motion.div variants={itemVariants} className="flex items-center justify-center gap-3 mb-6">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-orange-500/15 border border-orange-500/30 rounded-xl flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-orange-400" />
             </div>
-            <Badge className="border-orange-500/50 text-orange-400 bg-orange-950/50 px-3 py-1 md:px-4 md:py-2 text-xs md:text-sm font-medium">
-              Portfolio
+            <Badge className="border-orange-500/50 text-orange-400 bg-orange-950/50 px-4 py-2 text-sm font-medium">
+              Our Work
             </Badge>
           </motion.div>
           
           <motion.h2 
             variants={itemVariants} 
-            className="text-3xl md:text-4xl lg:text-6xl font-bold text-slate-100 mb-4 md:mb-6"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-100 mb-6"
           >
-            See Our Work <span className="text-orange-500">Live</span>
+            Featured <span className="text-orange-500">Projects</span>
           </motion.h2>
           
           <motion.p 
             variants={itemVariants}
-            className="text-lg md:text-xl lg:text-2xl text-slate-300/80 max-w-3xl mx-auto leading-relaxed"
+            className="text-lg md:text-xl lg:text-2xl text-slate-300/80 max-w-4xl mx-auto leading-relaxed"
           >
-            Experience real websites in action. Select a project below to explore the live site.
+            Explore our latest work where we transform innovative ideas into powerful digital experiences that drive real business results.
           </motion.p>
         </motion.div>
 
-        {/* Mobile-First Layout */}
+        {/* Projects Grid */}
         <motion.div
           variants={sectionVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-20 lg:items-start"
+          className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-10"
         >
-          {/* Phone Preview - Shows First on Mobile */}
-          <motion.div 
-            variants={itemVariants} 
-            className="order-1 lg:order-2 flex flex-col items-center space-y-6 lg:space-y-8"
-          >
-            {/* Preview Header */}
-            <div className="text-center space-y-2 lg:space-y-3">
-              <div className="flex items-center justify-center gap-2 text-slate-400">
-                <Smartphone className="w-4 h-4 lg:w-5 lg:h-5" />
-                <span className="text-base lg:text-lg font-medium">Live Preview</span>
-              </div>
-              <h4 className="text-lg lg:text-xl font-semibold text-slate-200">
-                {portfolioProjects[currentProject].title}
-              </h4>
-            </div>
+          {projects.map((project, index) => (
+            <ProjectCard 
+              key={project.id} 
+              project={project} 
+              index={index} 
+              onOpenModal={openModal}
+            />
+          ))}
+        </motion.div>
 
-            {/* Phone Mockup with Animation */}
-            <div className="relative">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentProject}
-                  initial={{ opacity: 0, scale: 0.9, rotateY: 10 }}
-                  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                  exit={{ opacity: 0, scale: 0.9, rotateY: -10 }}
-                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                  className="scale-75 md:scale-90 lg:scale-100"
-                >
-                  <PhoneMockup project={portfolioProjects[currentProject]} />
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Website Link */}
-            <Link href={portfolioProjects[currentProject].websiteUrl} target="_blank">
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-neutral-600 text-neutral-300 hover:border-orange-500/50 hover:text-orange-400 hover:bg-orange-500/5 px-4 py-2 lg:px-6 lg:py-3"
-              >
-                <ExternalLink className="w-3 h-3 lg:w-4 lg:h-4 mr-2" />
-                View Full Site
-              </Button>
-            </Link>
-          </motion.div>
-
-          {/* Project Selection - Compact on Mobile */}
-          <motion.div 
-            variants={itemVariants} 
-            className="order-2 lg:order-1 space-y-6 lg:space-y-8"
-          >
-            {/* Compact Header with Navigation */}
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-slate-100">
-                Choose Project
-              </h3>
-              <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={prevProject}
-                  className="w-8 h-8 lg:w-10 lg:h-10 p-0 border-neutral-600 text-neutral-400 hover:border-orange-500/50 hover:text-orange-400 hover:bg-orange-500/5"
-                >
-                  <ChevronLeft className="w-3 h-3 lg:w-4 lg:h-4" />
-                </Button>
-                <span className="text-xs lg:text-sm text-slate-400 px-2 lg:px-3">
-                  {currentProject + 1} / {portfolioProjects.length}
-                </span>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={nextProject}
-                  className="w-8 h-8 lg:w-10 lg:h-10 p-0 border-neutral-600 text-neutral-400 hover:border-orange-500/50 hover:text-orange-400 hover:bg-orange-500/5"
-                >
-                  <ChevronRight className="w-3 h-3 lg:w-4 lg:h-4" />
-                </Button>
+        {/* Call to Action */}
+        <motion.div
+          variants={itemVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="text-center mt-16 md:mt-20"
+        >
+          <div className="inline-flex items-center gap-4 p-6 bg-gradient-to-r from-neutral-900/80 to-neutral-800/80 border border-neutral-700/50 rounded-2xl backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              <Users className="w-6 h-6 text-orange-400" />
+              <div className="text-left">
+                <p className="text-sm text-slate-300">Ready to start your project?</p>
+                <p className="text-lg font-semibold text-slate-100">Let's create something amazing together</p>
               </div>
             </div>
-
-            {/* Horizontal Scroll on Mobile, Vertical on Desktop */}
-            <div className="block lg:hidden">
-              {/* Mobile: Horizontal Scroll Cards */}
-              <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
-                {portfolioProjects.map((project, index) => (
-                  <motion.button
-                    key={project.id}
-                    onClick={() => setCurrentProject(index)}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`relative flex-shrink-0 w-64 p-4 text-left rounded-xl border transition-all duration-300 snap-start ${
-                      index === currentProject 
-                        ? 'bg-gradient-to-br from-orange-500/10 to-orange-600/5 border-orange-500/30 shadow-lg shadow-orange-500/10' 
-                        : 'bg-neutral-900/50 border-neutral-700/50 hover:border-neutral-600/50'
-                    }`}
-                  >
-                    {/* Active Indicator */}
-                    {index === currentProject && (
-                      <div className="absolute top-3 right-3 w-2 h-2 bg-orange-500 rounded-full shadow-lg shadow-orange-500/50"></div>
-                    )}
-                    
-                    {/* Category Badge */}
-                    <Badge 
-                      className={`mb-2 text-xs font-medium ${
-                        index === currentProject 
-                          ? 'bg-orange-500/20 text-orange-300 border-orange-500/30' 
-                          : 'bg-neutral-700/50 text-neutral-300 border-neutral-600/50'
-                      }`}
-                    >
-                      {project.category}
-                    </Badge>
-                    
-                    {/* Project Info */}
-                    <h4 className="font-semibold text-slate-100 text-sm mb-2 leading-tight">
-                      {project.title}
-                    </h4>
-                    
-                    <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
-                      {project.description}
-                    </p>
-                    
-                    {/* Color Accent */}
-                    <div 
-                      className="absolute bottom-0 left-0 w-full h-0.5 rounded-b-xl"
-                      style={{ backgroundColor: index === currentProject ? '#f97316' : project.color }}
-                    ></div>
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-
-            {/* Desktop: Vertical Stack */}
-            <div className="hidden lg:block space-y-4">
-              {portfolioProjects.map((project, index) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  isActive={index === currentProject}
-                  onClick={() => setCurrentProject(index)}
-                />
-              ))}
-            </div>
-
-            {/* Action Button */}
-            <Link href="/start-project">
-              <Button
-                size="lg"
-                className="w-full group bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-semibold py-3 lg:py-4 shadow-xl shadow-orange-500/20 hover:shadow-orange-500/30 transition-all duration-300"
-              >
-                Start Your Project
-                <ArrowRight className="w-4 h-4 lg:w-5 lg:h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
-            </Link>
-          </motion.div>
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-400 hover:to-orange-500 transition-all duration-300 font-semibold group shadow-lg shadow-orange-500/25"
+              onClick={() => window.open('/contact', '_blank')}
+            >
+              <span className="flex items-center">
+                Get Started
+                <ArrowUpRight className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+              </span>
+            </Button>
+          </div>
         </motion.div>
       </div>
+
+      {/* Project Modal */}
+      <ProjectModal 
+        project={selectedProject}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      />
     </section>
   );
 } 
