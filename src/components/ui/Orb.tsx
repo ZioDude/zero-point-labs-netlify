@@ -17,6 +17,7 @@ export default function Orb({
   forceHoverState = false,
 }: OrbProps) {
   const ctnDom = useRef<HTMLDivElement>(null);
+  const targetHover = useRef({ x: 0, y: 0 });
 
   const vert = /* glsl */ `
     precision highp float;
@@ -225,7 +226,7 @@ export default function Orb({
     window.addEventListener("resize", resize);
     resize();
 
-    let targetHover = forceHoverState ? 1 : 0;
+    const targetHover = forceHoverState ? 1 : 0;
     let lastTime = 0;
     let currentRot = 0;
     const rotationSpeed = 0.2; // Continuous slow rotation

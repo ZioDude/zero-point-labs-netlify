@@ -6,10 +6,13 @@ interface GridPatternProps {
   height?: number;
   x?: number;
   y?: number;
-  squares?: Array<[x: number, y: number]>;
-  strokeDasharray?: any;
+  strokeDasharray?: number | string;
+  numSquares?: number;
   className?: string;
-  [key: string]: any;
+  maxOpacity?: number;
+  duration?: number;
+  repeatDelay?: number;
+  [key: string]: unknown;
 }
 
 export function GridPattern({

@@ -182,7 +182,7 @@ const Threads: React.FC<ThreadsProps> = ({
     window.addEventListener("resize", resize);
     resize();
 
-    let currentMouse = [0.5, 0.5];
+    const currentMouse = { x: 0, y: 0 };
     let targetMouse = [0.5, 0.5];
 
     function handleMouseMove(e: MouseEvent) {
@@ -202,10 +202,10 @@ const Threads: React.FC<ThreadsProps> = ({
     function update(t: number) {
       if (enableMouseInteraction) {
         const smoothing = 0.05;
-        currentMouse[0] += smoothing * (targetMouse[0] - currentMouse[0]);
-        currentMouse[1] += smoothing * (targetMouse[1] - currentMouse[1]);
-        program.uniforms.uMouse.value[0] = currentMouse[0];
-        program.uniforms.uMouse.value[1] = currentMouse[1];
+        currentMouse.x += smoothing * (targetMouse[0] - currentMouse.x);
+        currentMouse.y += smoothing * (targetMouse[1] - currentMouse.y);
+        program.uniforms.uMouse.value[0] = currentMouse.x;
+        program.uniforms.uMouse.value[1] = currentMouse.y;
       } else {
         program.uniforms.uMouse.value[0] = 0.5;
         program.uniforms.uMouse.value[1] = 0.5;

@@ -1,14 +1,26 @@
 "use client";
 
+import React, { useRef } from "react";
 import Link from "next/link";
-import { motion, Variants, useInView } from "framer-motion";
+import { motion, useInView, Variants } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ArrowRight, Briefcase, Wand2, Zap, Users, ShieldCheck, Sparkles, Palette, Code, Rocket, CheckCircle, LayoutTemplate, ShoppingCart } from "lucide-react";
-import React, { useRef } from "react";
+import { 
+  ArrowRight, 
+  Briefcase, 
+  Zap, 
+  Sparkles,
+  ChevronDown,
+  Palette,
+  Code,
+  Rocket,
+  CheckCircle,
+  LayoutTemplate,
+  ShoppingCart
+} from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import GridPattern from "@/components/magicui/GridPattern";
 import { WordRotate } from "@/components/magicui/WordRotate";

@@ -21,11 +21,10 @@ export default function Particles() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const parentElement = canvas?.parentElement;
-    if (!canvas || !parentElement) return;
+    if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
 
     // Define initParticles BEFORE resizeCanvas
     const initParticles = () => {
@@ -60,7 +59,7 @@ export default function Particles() {
 
     resizeCanvas();
     const resizeObserver = new ResizeObserver(resizeCanvas);
-    resizeObserver.observe(parentElement);
+    resizeObserver.observe(parentRef.current);
 
     // updateParticles and drawParticles can be defined after initParticles 
     // as they are only called in the animate loop
@@ -88,19 +87,19 @@ export default function Particles() {
     };
 
     const drawParticles = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      context.clearRect(0, 0, canvas.width, canvas.height);
       
       particlesRef.current.forEach(particle => {
-        ctx.save();
-        ctx.globalAlpha = particle.opacity;
+        context.save();
+        context.globalAlpha = particle.opacity;
         
         // --- INTENDED ORANGE COLOR ---
-        ctx.fillStyle = '#FFA500'; // Bright Orange
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fill();
+        context.fillStyle = '#FFA500'; // Bright Orange
+        context.beginPath();
+        context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        context.fill();
         
-        ctx.restore();
+        context.restore();
       });
     };
 
@@ -114,7 +113,7 @@ export default function Particles() {
     animate();
 
     return () => {
-      resizeObserver.unobserve(parentElement); // Clean up ResizeObserver
+      resizeObserver.unobserve(parentRef.current); // Clean up ResizeObserver
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
