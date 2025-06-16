@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useInView, Variants } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,9 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import GridPattern from "@/components/magicui/GridPattern";
 import { WordRotate } from "@/components/magicui/WordRotate";
+import { AuroraText } from "@/components/magicui/aurora-text";
+import { SparklesText } from "@/components/magicui/sparkles-text";
+import { BorderBeam } from "@/components/magicui/border-beam";
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0 },
@@ -144,27 +147,18 @@ const processSteps = [
     title: "Design",
     description: "We create stunning, user-focused designs tailored to your brand and goals.",
     step: "01",
-    color: "text-blue-400",
-    bgColor: "bg-blue-500/15",
-    borderColor: "border-blue-500/30",
   },
   {
     icon: Code,
     title: "Develop",
     description: "Our expert developers bring your design to life with clean, efficient code.",
     step: "02", 
-    color: "text-green-400",
-    bgColor: "bg-green-500/15",
-    borderColor: "border-green-500/30",
   },
   {
     icon: Rocket,
     title: "Deploy",
     description: "We launch your website and ensure everything runs smoothly from day one.",
     step: "03",
-    color: "text-orange-400", 
-    bgColor: "bg-orange-500/15",
-    borderColor: "border-orange-500/30",
   },
 ];
 
@@ -325,6 +319,21 @@ const BenefitCard = ({ benefit, index }: { benefit: typeof benefits[0], index: n
 };
 
 export default function HeroSection() {
+  const [activeProcessStep, setActiveProcessStep] = useState(0);
+  const processRef = useRef(null);
+  const isProcessInView = useInView(processRef, { once: true, margin: "-100px" });
+
+  // Sequential BorderBeam animation for process steps
+  useEffect(() => {
+    if (!isProcessInView) return;
+
+    const interval = setInterval(() => {
+      setActiveProcessStep((prev) => (prev + 1) % processSteps.length);
+    }, 3000); // 3 seconds per step
+
+    return () => clearInterval(interval);
+  }, [isProcessInView]);
+
   return (
     <motion.section
       className="relative w-full min-h-screen flex flex-col items-center justify-center px-4 md:px-8 py-20 md:py-24 overflow-hidden bg-[#0A0A0A] text-slate-100 isolate"
@@ -343,12 +352,12 @@ export default function HeroSection() {
         }
       />
       
-      {/* Two Column Layout */}
-      <div className="container mx-auto z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl">
+      {/* Main Hero Content - Centered */}
+      <div className="container mx-auto z-10 max-w-4xl text-center space-y-8 md:space-y-12">
         
-        {/* Left Column - Main Content */}
+        {/* Header Section */}
         <motion.div 
-          className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 md:space-y-8"
+          className="flex flex-col items-center space-y-6 md:space-y-8"
           initial="hidden"
           animate="visible"
         >
@@ -374,9 +383,14 @@ export default function HeroSection() {
               We Craft
             </div>
             <WordRotate
-              words={["Beautiful Websites", "Digital Experiences", "E-commerce Stores", "Landing Pages", "Web Applications"]}
+              words={[
+                <AuroraText key="word1" className="text-orange-500 block" colors={["#FDE047", "#FDBA74", "#F97316", "#EA580C"]} speed={1.5}>Beautiful Websites</AuroraText>,
+                <AuroraText key="word2" className="text-orange-500 block" colors={["#FDE047", "#FDBA74", "#F97316", "#EA580C"]} speed={1.5}>Digital Experiences</AuroraText>,
+                <AuroraText key="word3" className="text-orange-500 block" colors={["#FDE047", "#FDBA74", "#F97316", "#EA580C"]} speed={1.5}>E-commerce Stores</AuroraText>,
+                <AuroraText key="word4" className="text-orange-500 block" colors={["#FDE047", "#FDBA74", "#F97316", "#EA580C"]} speed={1.5}>Landing Pages</AuroraText>,
+                <AuroraText key="word5" className="text-orange-500 block" colors={["#FDE047", "#FDBA74", "#F97316", "#EA580C"]} speed={1.5}>Web Applications</AuroraText>,
+              ]}
               duration={2500}
-              className="text-orange-500 block"
               motionProps={{
                 initial: { opacity: 0, y: 30, scale: 0.9 },
                 animate: { opacity: 1, y: 0, scale: 1 },
@@ -384,14 +398,22 @@ export default function HeroSection() {
                 transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
               }}
             />
-            <div className="text-slate-50 mt-2 md:mt-4">
-              That <span className="text-orange-400">Convert</span>
+            <div className="text-slate-50 mt-2 md:mt-4 flex items-baseline justify-center">
+              <span>That&nbsp;</span>
+              <SparklesText 
+                as={<span />}
+                className="text-white text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-extrabold"
+                colors={{ first: "#FDBA74", second: "#F97316" }}
+                sparklesCount={1}
+              >
+                Convert
+              </SparklesText>
             </div>
           </motion.div>
 
           <motion.p
             variants={itemVariants}
-            className="max-w-xl text-base sm:text-lg md:text-xl leading-relaxed text-slate-300/90 font-medium"
+            className="max-w-2xl text-base sm:text-lg md:text-xl leading-relaxed text-slate-300/90 font-medium"
           >
             Transform your ideas into high-converting websites. We handle the complete journey from design to deployment, ensuring your online presence drives real results.
           </motion.p>
@@ -417,12 +439,12 @@ export default function HeroSection() {
 
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-5 w-full max-w-md sm:max-w-none"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5"
           >
-            <Link href="/start-project" className="w-full sm:w-auto">
+            <Link href="/start-project">
               <Button
                 size="lg" 
-                className="w-full group relative overflow-hidden bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-slate-950 font-bold py-4 px-8 text-base shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-300 ease-in-out transform hover:scale-[1.02] border-0"
+                className="group relative overflow-hidden bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-slate-950 font-bold py-4 px-8 text-base shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-300 ease-in-out transform hover:scale-[1.02] border-0"
               >
                 <span className="flex items-center relative z-10">
                   Get Your Website Built
@@ -431,11 +453,11 @@ export default function HeroSection() {
                 <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </Button>
             </Link>
-            <Link href="/portfolio" className="w-full sm:w-auto">
+            <Link href="/portfolio">
               <Button
                 size="lg"
                 variant="outline"
-                className="w-full group text-slate-300 border-slate-600 hover:border-orange-500/90 hover:bg-orange-500/10 hover:text-orange-400 font-semibold py-4 px-8 text-base shadow-lg shadow-black/20 hover:shadow-orange-500/20 transition-all duration-300 ease-in-out transform hover:scale-[1.02]"
+                className="group text-slate-300 border-slate-600 hover:border-orange-500/90 hover:bg-orange-500/10 hover:text-orange-400 font-semibold py-4 px-8 text-base shadow-lg shadow-black/20 hover:shadow-orange-500/20 transition-all duration-300 ease-in-out transform hover:scale-[1.02]"
               >
                 <span className="flex items-center">
                   View Our Work
@@ -445,70 +467,100 @@ export default function HeroSection() {
             </Link>
           </motion.div>
         </motion.div>
-
-        {/* Right Column - Website Building Process */}
-        <motion.div 
-          className="flex flex-col space-y-6"
-          variants={leftColumnVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <div className="text-center lg:text-left">
-            <h2 className="text-xl md:text-2xl font-bold text-slate-100 mb-3">
-              Our <span className="text-orange-500">Process</span>
-            </h2>
-            <p className="text-slate-400 text-base">
-              From concept to launch in 3 simple steps
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {processSteps.map((step, index) => (
-              <motion.div
-                key={index}
-                variants={processStepVariants}
-                className="relative"
-              >
-                <div className={`flex items-start gap-3 p-4 rounded-lg border ${step.borderColor} ${step.bgColor} backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]`}>
-                  <div className="flex-shrink-0">
-                    <div className={`w-10 h-10 rounded-lg ${step.bgColor} border ${step.borderColor} flex items-center justify-center`}>
-                      <step.icon className={`w-5 h-5 ${step.color}`} />
-                    </div>
-                  </div>
-                  <div className="flex-grow">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className={`text-lg font-semibold ${step.color}`}>
-                        {step.title}
-                      </h3>
-                      <span className="text-xs font-mono text-slate-500 bg-slate-800/50 px-1.5 py-0.5 rounded">
-                        {step.step}
-                      </span>
-                    </div>
-                    <p className="text-slate-300 text-sm leading-relaxed">
-                      {step.description}
-                    </p>
-                  </div>
-                </div>
-                
-                {/* Connecting Line */}
-                {index < processSteps.length - 1 && (
-                  <div className="absolute left-8 top-full w-0.5 h-4 bg-gradient-to-b from-slate-600 to-transparent"></div>
-                )}
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div 
-            className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/20 rounded-lg"
-            variants={processStepVariants}
-          >
-            <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
-            <span className="text-green-300 text-sm font-medium">
-              Average delivery time: 7-14 days
-            </span>
-          </motion.div>
-        </motion.div>
       </div>
+
+      {/* Our Process Section - Centered Below */}
+      <motion.div 
+        ref={processRef}
+        className="container mx-auto z-10 mt-16 md:mt-20 lg:mt-24 max-w-4xl"
+        variants={leftColumnVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <div className="text-center mb-8 md:mb-12">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-100 mb-4">
+            Our <span className="text-orange-500">Process</span>
+          </h2>
+          <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto">
+            From concept to launch in 3 simple steps
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          {processSteps.map((step, index) => (
+            <motion.div
+              key={index}
+              variants={processStepVariants}
+              className="relative"
+              animate={{
+                scale: activeProcessStep === index ? 1.05 : 1,
+                transition: { duration: 0.3, ease: "easeOut" }
+              }}
+            >
+              <div className={`relative flex flex-col items-center text-center p-6 md:p-8 rounded-xl border backdrop-blur-md transition-all duration-500 overflow-hidden h-[280px] md:h-[320px] ${
+                activeProcessStep === index 
+                  ? 'border-orange-500/50 bg-neutral-800/50 shadow-lg shadow-orange-500/20' 
+                  : 'border-neutral-700/50 bg-neutral-800/30 hover:scale-[1.02]'
+              }`}>
+                {activeProcessStep === index && (
+                  <BorderBeam
+                    size={100}
+                    duration={4}
+                    colorFrom="#F97316"
+                    colorTo="#F97316"
+                  />
+                )}
+                <div className="flex-shrink-0 relative z-10 mb-4">
+                  <motion.div 
+                    className={`w-16 h-16 md:w-20 md:h-20 rounded-xl border flex items-center justify-center backdrop-blur-sm transition-all duration-300 ${
+                      activeProcessStep === index
+                        ? 'bg-orange-500/20 border-orange-500/50'
+                        : 'bg-neutral-700/50 border-neutral-600/50'
+                    }`}
+                    animate={{
+                      scale: activeProcessStep === index ? 1.1 : 1,
+                      transition: { duration: 0.3, ease: "easeOut" }
+                    }}
+                  >
+                    <step.icon className={`w-8 h-8 md:w-10 md:h-10 transition-colors duration-300 ${
+                      activeProcessStep === index ? 'text-orange-400' : 'text-slate-300'
+                    }`} />
+                  </motion.div>
+                </div>
+                <div className="flex-grow relative z-10">
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <h3 className={`text-xl md:text-2xl font-semibold transition-colors duration-300 ${
+                      activeProcessStep === index ? 'text-orange-300' : 'text-slate-200'
+                    }`}>
+                      {step.title}
+                    </h3>
+                    <span className={`text-sm font-mono px-2 py-1 rounded transition-all duration-300 ${
+                      activeProcessStep === index 
+                        ? 'text-orange-400 bg-orange-500/20' 
+                        : 'text-slate-400 bg-neutral-700/50'
+                    }`}>
+                      {step.step}
+                    </span>
+                  </div>
+                  <p className="text-slate-300 text-base md:text-lg leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div 
+          className="flex items-center justify-center gap-2 p-4 bg-green-500/10 border border-green-500/20 rounded-lg mt-8 max-w-md mx-auto"
+          variants={processStepVariants}
+        >
+          <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+          <span className="text-green-300 text-base font-medium">
+            Average delivery time: 7-14 days
+          </span>
+        </motion.div>
+      </motion.div>
 
       {/* Benefits Section - Full Width Below with Scroll Effects */}
       <motion.div 

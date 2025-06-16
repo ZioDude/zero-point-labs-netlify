@@ -3,21 +3,48 @@
 import Image from 'next/image';
 import Link from 'next/link';
 // import { ShimmerButton } from '@/components/magicui/ShimmerButton'; // No longer using ShimmerButton here
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+
+// Variants for the header hide/show animation
+const headerVariants: Variants = {
+  visible: { y: 0, transition: { duration: 0.3, ease: "easeInOut" } },
+  hidden: { y: "-100%", transition: { duration: 0.3, ease: "easeInOut" } },
+};
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true); // State for header visibility
+  const lastScrollYRef = useRef(0); // Ref for last scroll position
 
   useEffect(() => {
+    const headerHeight = 72; // Approx height md:h-18 (4.5rem = 72px)
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+
+      // Existing logic for background style
+      setIsScrolled(currentScrollY > 20);
+
+      // New logic for hide/show header
+      if (currentScrollY <= headerHeight) {
+        setIsHeaderVisible(true);
+      } else if (currentScrollY > lastScrollYRef.current) {
+        setIsHeaderVisible(false);
+      } else {
+        setIsHeaderVisible(true);
+      }
+      lastScrollYRef.current = currentScrollY;
     };
-    window.addEventListener('scroll', handleScroll);
+
+    // Initialize ref on mount
+    lastScrollYRef.current = window.scrollY;
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, []); // Empty dependency array ensures this runs only on mount and unmount
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -54,7 +81,10 @@ export default function Header() {
 
   return (
     <>
-      <header 
+      <motion.header // Changed to motion.header
+        variants={headerVariants}
+        animate={isHeaderVisible ? "visible" : "hidden"}
+        initial="visible"
         className={`fixed top-0 z-50 w-full transition-all duration-500 ease-out h-16 md:h-18 flex items-center
           ${isScrolled 
             ? 'bg-black/95 backdrop-blur-xl shadow-2xl shadow-black/60' 
@@ -100,7 +130,7 @@ export default function Header() {
             </div>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Minimal Slide-out Menu */}
       <AnimatePresence>

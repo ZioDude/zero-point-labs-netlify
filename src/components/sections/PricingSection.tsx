@@ -19,6 +19,7 @@ import {
   Bot,
   Sparkles
 } from "lucide-react";
+import { BorderBeam } from "@/components/magicui/border-beam";
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0 },
@@ -171,6 +172,14 @@ const PricingCard = ({ tier, index }: { tier: typeof pricingTiers[0], index: num
         {/* Background Glow Effect for Popular */}
         {tier.popular && (
           <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-transparent opacity-50 pointer-events-none" />
+        )}
+        {tier.popular && (
+          <BorderBeam
+            size={250}
+            duration={6}
+            delay={0}
+            className="from-transparent via-orange-500 to-transparent"
+          />
         )}
         
         <CardHeader className="p-6 pb-4 relative">
