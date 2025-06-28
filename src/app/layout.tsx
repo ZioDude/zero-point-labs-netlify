@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { MultistepFormProvider } from "@/contexts/MultistepFormContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
+        <AuthProvider>
         <MultistepFormProvider>
           <Header />
           <main className="flex-grow">
@@ -37,6 +39,7 @@ export default function RootLayout({
           </main>
           <Footer />
         </MultistepFormProvider>
+        </AuthProvider>
       </body>
     </html>
   );

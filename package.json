@@ -5,8 +5,24 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:cf": "next build && npx @cloudflare/next-on-pages",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:setup": "chmod +x scripts/setup-database.sh && ./scripts/setup-database.sh",
+    "db:setup-manual": "chmod +x scripts/setup-database-manual.sh && ./scripts/setup-database-manual.sh",
+    "db:status": "chmod +x scripts/db-status.sh && ./scripts/db-status.sh",
+    "db:clients": "chmod +x scripts/manage-clients.sh && ./scripts/manage-clients.sh",
+    "db:test": "node scripts/test-database.js",
+    "db:backup": "wrangler d1 export zero-point-labs-dashboard --output=backup-$(date +%Y%m%d-%H%M%S).sql",
+    "dev:local": "wrangler dev --local --persist",
+    "prepare:deploy": "chmod +x scripts/prepare-deployment.sh && ./scripts/prepare-deployment.sh",
+    "deploy": "chmod +x scripts/deploy-cloudflare.sh && ./scripts/deploy-cloudflare.sh",
+    "deploy:build": "chmod +x scripts/deploy-cloudflare.sh && ./scripts/deploy-cloudflare.sh --build-only",
+    "deploy:upload": "chmod +x scripts/deploy-cloudflare.sh && ./scripts/deploy-cloudflare.sh --deploy-only",
+    "pages:create": "wrangler pages project create zero-point-labs-dashboard --production-branch main",
+    "pages:deploy": "npm run build:cf && wrangler pages deploy .vercel/output/static --project-name zero-point-labs-dashboard",
+    "pages:list": "wrangler pages deployment list --project-name zero-point-labs-dashboard",
+    "pages:logs": "wrangler pages deployment tail --project-name zero-point-labs-dashboard"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -18,6 +34,7 @@
     "@react-three/fiber": "^9.1.2",
     "@supabase/supabase-js": "^2.50.0",
     "@types/uuid": "^10.0.0",
+    "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cobe": "^0.6.4",
@@ -37,8 +54,9 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.12",
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4.1.11",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

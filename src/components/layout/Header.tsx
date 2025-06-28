@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { useMultistepFormContext } from "@/contexts/MultistepFormContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Variants for the header hide/show animation
 const headerVariants: Variants = {
@@ -20,6 +21,7 @@ export default function Header() {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true); // State for header visibility
   const lastScrollYRef = useRef(0); // Ref for last scroll position
   const { openForm } = useMultistepFormContext();
+  const { isLoggedIn, loading } = useAuth();
 
   useEffect(() => {
     const headerHeight = 72; // Approx height md:h-18 (4.5rem = 72px)
@@ -74,16 +76,52 @@ export default function Header() {
     { href: "/contact", label: "Contact" },
   ];
 
-  const quoteButtonBaseClasses = 
+  const actionButtonBaseClasses = 
     "font-medium rounded-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
-  const quoteButtonDesktopClasses = 
-    `px-5 py-2 text-sm text-orange-400 border border-orange-500/70 hover:bg-orange-500/10 hover:text-orange-300 hover:border-orange-400 ${quoteButtonBaseClasses}`;
-  const quoteButtonMenuClasses = 
-    `w-full py-3 text-base text-orange-400 border border-orange-500/70 hover:bg-orange-500/10 hover:text-orange-300 hover:border-orange-400 ${quoteButtonBaseClasses}`;
+  const actionButtonDesktopClasses = 
+    `px-5 py-2 text-sm text-orange-400 border border-orange-500/70 hover:bg-orange-500/10 hover:text-orange-300 hover:border-orange-400 ${actionButtonBaseClasses}`;
+  const actionButtonMenuClasses = 
+    `w-full py-3 text-base text-orange-400 border border-orange-500/70 hover:bg-orange-500/10 hover:text-orange-300 hover:border-orange-400 ${actionButtonBaseClasses}`;
 
-  const handleGetQuote = () => {
+  const handleActionClick = () => {
+    if (isLoggedIn) {
+      // Already handled by Link component for dashboard
+      setIsMobileMenuOpen(false);
+    } else {
     openForm();
-    setIsMobileMenuOpen(false); // Close mobile menu if open
+      setIsMobileMenuOpen(false);
+    }
+  };
+
+  const getActionButton = (isMobile: boolean = false) => {
+    if (loading) {
+      return (
+        <div className={`${isMobile ? 'w-full py-3' : 'px-5 py-2'} flex items-center justify-center`}>
+          <div className="w-4 h-4 border-2 border-orange-400 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      );
+    }
+
+    if (isLoggedIn) {
+      return (
+        <Link 
+          href="/dashboard" 
+          className={isMobile ? actionButtonMenuClasses : actionButtonDesktopClasses}
+          onClick={() => isMobile && setIsMobileMenuOpen(false)}
+        >
+          Dashboard
+        </Link>
+      );
+    }
+
+    return (
+      <button 
+        onClick={handleActionClick} 
+        className={isMobile ? actionButtonMenuClasses : actionButtonDesktopClasses}
+      >
+        Get a Quote
+      </button>
+    );
   };
 
   return (
@@ -128,12 +166,10 @@ export default function Header() {
             </Link>
           </div>
           
-          {/* Right Slot: Get a Quote Button (Desktop) */}
+          {/* Right Slot: Action Button (Get Quote/Dashboard) */}
           <div className="flex-shrink-0 w-10 h-10 md:w-auto md:h-auto flex items-center justify-center">
             <div className="hidden md:block">
-              <button onClick={openForm} className={quoteButtonDesktopClasses}>
-                Get a Quote
-              </button>
+              {getActionButton(false)}
             </div>
           </div>
         </div>
@@ -189,6 +225,23 @@ export default function Header() {
                     </Link>
                   </motion.div>
                 ))}
+                
+                {/* Dashboard link for logged in users in mobile */}
+                {isLoggedIn && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navItems.length * 0.1 + 0.2, duration: 0.3 }}
+                  >
+                    <Link 
+                      href="/dashboard" 
+                      className={mobileNavLinkClasses} 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                  </motion.div>
+                )}
               </nav>
 
               <motion.div 
@@ -197,9 +250,7 @@ export default function Header() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.3 }}
               >
-                <button onClick={handleGetQuote} className={quoteButtonMenuClasses}>
-                  Get a Quote
-                </button>
+                {getActionButton(true)}
               </motion.div>
             </motion.div>
           </>

@@ -1,0 +1,37 @@
+# Wrangler ignore file for Cloudflare Pages deployment
+# Focus on excluding cache files and other large/unnecessary files
+
+# Cache directories (main issue - the 63MB webpack cache)
+.next/cache/
+cache/
+**/cache/**
+
+# Node modules (already excluded by default, but being explicit)
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Git
+.git/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Development scripts (we don't need these in production)
+scripts/
+
+# Documentation (saves space)
+*.md
+README*
+
+# Source maps (optional - uncomment to exclude and save space)
+# **/*.map 
