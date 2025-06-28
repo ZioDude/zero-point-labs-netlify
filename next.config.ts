@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     // your project has type errors.
     ignoreBuildErrors: true,
   },
-  // Disable image optimization for Cloudflare Pages
+  // Disable image optimization for Netlify
   images: {
     unoptimized: true,
   },
