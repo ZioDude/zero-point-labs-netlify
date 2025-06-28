@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import ReactMarkdown from 'react-markdown';
+import { useMultistepFormContext } from "@/contexts/MultistepFormContext";
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0 },
@@ -167,6 +168,8 @@ export default function ChatSection() {
     "What's your development process?",
     "Can you help with AI integration?"
   ];
+
+  const { openForm } = useMultistepFormContext();
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -550,7 +553,10 @@ export default function ChatSection() {
                     If you need more detailed information or want to discuss your specific requirements, 
                     our team is ready to help you bring your vision to life.
                   </p>
-                  <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white border-0 px-8 py-3 shadow-lg shadow-orange-500/25">
+                  <Button 
+                    onClick={openForm}
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white border-0 px-8 py-3 shadow-lg shadow-orange-500/25"
+                  >
                     Get Started Today
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>

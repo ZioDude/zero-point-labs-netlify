@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { motion, useInView, Variants } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from "@/components/ui/separator";
 import { 
   ArrowUpRight, 
   Mail, 
@@ -21,6 +22,7 @@ import {
   Send
 } from 'lucide-react';
 import { BorderBeam } from '@/components/magicui/border-beam';
+import { useMultistepFormContext } from "@/contexts/MultistepFormContext";
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0 },
@@ -54,6 +56,7 @@ export default function Footer() {
   const footerRef = useRef(null);
   const isInView = useInView(footerRef, { once: true, margin: "-100px" });
   const currentYear = new Date().getFullYear();
+  const { openForm } = useMultistepFormContext();
 
   const services = [
     { name: "Landing Pages", href: "/services/landing-pages", price: "€350" },
@@ -307,13 +310,11 @@ export default function Footer() {
                       </Link>
                     </Button>
                     <Button 
+                      onClick={openForm}
                       className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white shadow-lg shadow-orange-500/25"
-                      asChild
                     >
-                      <Link href="/contact">
-                        Get Started
-                        <ArrowUpRight className="w-4 h-4 ml-2" />
-                      </Link>
+                      Get Started
+                      <ArrowUpRight className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
                 </div>

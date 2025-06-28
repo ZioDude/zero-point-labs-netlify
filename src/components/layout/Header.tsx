@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { useMultistepFormContext } from "@/contexts/MultistepFormContext";
 
 // Variants for the header hide/show animation
 const headerVariants: Variants = {
@@ -18,6 +19,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true); // State for header visibility
   const lastScrollYRef = useRef(0); // Ref for last scroll position
+  const { openForm } = useMultistepFormContext();
 
   useEffect(() => {
     const headerHeight = 72; // Approx height md:h-18 (4.5rem = 72px)
@@ -79,6 +81,11 @@ export default function Header() {
   const quoteButtonMenuClasses = 
     `w-full py-3 text-base text-orange-400 border border-orange-500/70 hover:bg-orange-500/10 hover:text-orange-300 hover:border-orange-400 ${quoteButtonBaseClasses}`;
 
+  const handleGetQuote = () => {
+    openForm();
+    setIsMobileMenuOpen(false); // Close mobile menu if open
+  };
+
   return (
     <>
       <motion.header // Changed to motion.header
@@ -124,9 +131,9 @@ export default function Header() {
           {/* Right Slot: Get a Quote Button (Desktop) */}
           <div className="flex-shrink-0 w-10 h-10 md:w-auto md:h-auto flex items-center justify-center">
             <div className="hidden md:block">
-              <Link href="/get-a-quote" className={quoteButtonDesktopClasses}>
+              <button onClick={openForm} className={quoteButtonDesktopClasses}>
                 Get a Quote
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -190,9 +197,9 @@ export default function Header() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.3 }}
               >
-                <Link href="/get-a-quote" className={quoteButtonMenuClasses} onClick={() => setIsMobileMenuOpen(false)}>
+                <button onClick={handleGetQuote} className={quoteButtonMenuClasses}>
                   Get a Quote
-                </Link>
+                </button>
               </motion.div>
             </motion.div>
           </>

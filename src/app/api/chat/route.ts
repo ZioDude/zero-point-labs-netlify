@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
+export const runtime = 'edge';
+
 // Company knowledge base
 const COMPANY_CONTEXT = `
 You are ZeroBot, an AI assistant for Zero Point Labs. Give SHORT, CONCISE answers - 2-3 sentences max unless specifically asked for details.

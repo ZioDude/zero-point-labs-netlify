@@ -20,6 +20,7 @@ import {
   Sparkles
 } from "lucide-react";
 import { BorderBeam } from "@/components/magicui/border-beam";
+import { useMultistepFormContext } from "@/contexts/MultistepFormContext";
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0 },
@@ -145,6 +146,16 @@ const pricingTiers = [
 const PricingCard = ({ tier, index }: { tier: typeof pricingTiers[0], index: number }) => {
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: true, margin: "-50px" });
+  const { openForm } = useMultistepFormContext();
+
+  const handleGetStarted = () => {
+    if (tier.id === "enterprise") {
+      // Keep the consultation link for enterprise
+      window.location.href = "/contact";
+    } else {
+      openForm();
+    }
+  };
 
   return (
     <motion.div
@@ -227,22 +238,21 @@ const PricingCard = ({ tier, index }: { tier: typeof pricingTiers[0], index: num
             ))}
           </ul>
 
-          <Link href={tier.id === "enterprise" ? "/contact" : "/start-project"}>
-            <Button
-              size="lg"
-              className={`w-full group ${
-                tier.popular 
-                  ? tier.buttonColor + " shadow-lg shadow-orange-500/25"
-                  : tier.buttonColor
-              } transition-all duration-300 font-semibold py-3`}
-              variant={tier.popular ? "default" : "outline"}
-            >
-              <span className="flex items-center justify-center">
-                {tier.id === "enterprise" ? "Get Consultation" : "Get Started"}
-                <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
-              </span>
-            </Button>
-          </Link>
+          <Button
+            size="lg"
+            onClick={handleGetStarted}
+            className={`w-full group ${
+              tier.popular 
+                ? tier.buttonColor + " shadow-lg shadow-orange-500/25"
+                : tier.buttonColor
+            } transition-all duration-300 font-semibold py-3`}
+            variant={tier.popular ? "default" : "outline"}
+          >
+            <span className="flex items-center justify-center">
+              {tier.id === "enterprise" ? "Get Consultation" : "Get Started"}
+              <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
+          </Button>
         </CardContent>
       </Card>
     </motion.div>

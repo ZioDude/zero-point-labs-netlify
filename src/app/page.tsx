@@ -1,5 +1,4 @@
 import HeroSection from "@/components/sections/HeroSection";
-import PortfolioSection from "@/components/sections/PortfolioSection";
 import PricingSection from "@/components/sections/PricingSection";
 import ChatSection from "@/components/sections/ChatSection";
 
@@ -7,7 +6,6 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      <PortfolioSection />
       <PricingSection />
       <ChatSection />
       {/* We can add more sections here later */}

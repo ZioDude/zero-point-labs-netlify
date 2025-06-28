@@ -1,0 +1,69 @@
+Zero Point AI Consulting Bot - Business Details
+
+1. Company Overview:
+Zero Point is a full-service digital agency specializing in website, landing page, and web application development, with a growing focus on AI-driven features and automations tailored to diverse industries.
+
+2. Core Services:
+- Website Design & Development
+- Landing Page Creation
+- Custom Web Application Development
+- AI Feature Integration & Automation
+
+3. Qualification Flow:
+- Step 1: Ask project type (Website, Landing Page, Web App)
+- Step 2: Ask industry (e.g., Gym, Restaurant, E-commerce, Professional Services)
+- Step 3: Ask goals and target audience
+- Step 4: Confirm project scope and timeline preferences
+
+4. Portfolio Examples:
+- Gym Website: https://zero-point.com/portfolio/gym-fitness
+- Restaurant Landing Page: https://zero-point.com/portfolio/restaurant-landing
+- E-commerce Web App: https://zero-point.com/portfolio/ecommerce-platform
+- Professional Services Site: https://zero-point.com/portfolio/pro-services
+
+5. CRM Fields & Data Model:
+- name (string)
+- email (string)
+- phone (string)
+- interest (enum: Website, Landing Page, Web App)
+- industry (string)
+- goals (text)
+- timeline (string)
+- upsell_interest (string, optional)
+- conversation_id (string for chat session)
+
+6. Industry → AI Upsell Mapping:
+Gym:
+  - AI Member Portal (payment collection, subscription management, analytics, dynamic offers)
+Restaurant:
+  - AI Reservation Chatbot (24/7 bookings, menu upsell suggestions)
+E-commerce:
+  - Recommendation Engine (personalized product suggestions, predictive inventory)
+Professional Services:
+  - Automated Proposal Generator (custom proposals based on client input)
+  - Client Insights Dashboard (track engagement, follow-up reminders)
+
+7. Prompt Templates:
+a) Qualification:
+"Hello! Are you looking to build a website, landing page, or web app?"
+"If website, what industry are you in?"
+b) Portfolio Showcase:
+"Here are some examples we’ve built for [industry]: [URL1], [URL2]"
+c) Lead Capture:
+"Great! Could I get your name, email, and phone to create a proposal?"
+d) Upsell:
+"By the way, would you like to add [AI_FEATURE_DESCRIPTION] to enhance your project?"
+
+8. API Integration Endpoints:
+- POST /api/crm/leads
+  Payload: { name, email, phone, interest, industry, goals, timeline, conversation_id }
+- PATCH /api/crm/leads/{lead_id}
+  Payload: { upsell_interest }
+
+9. Content Store Structure (for portfolio retrieval):
+- Collection: portfolio_examples
+  - Fields: industry, project_type, title, description, url
+
+10. Chunking Guidelines:
+- Split file by numbered sections.
+- Aim for max 500 tokens per chunk; use section headers as breakpoints.
